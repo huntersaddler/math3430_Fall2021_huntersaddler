@@ -256,3 +256,209 @@ def test_five_matrix_matrix_mult():
 
     assert matrix_matrix_mult(testm_5a, testm_5b) == [[11, 2], [19, 20]]
     assert matrix_matrix_mult(testm_5c, testm_5d) == [[7, 10], [15, 22]]
+
+
+#HOMEWORK 04 STARTS HERE
+"""
+This assignment is due by 11:59pm on 10/22/2021. 
+
+For this assignment you will be adding functions to the LA.py script from HW03.
+All functions must satisfy the same requirements as in HW03. The functions you
+will need to add are
+
+#1) A function which takes a scalar as it's input and returns it's absolute
+value. Note that this function must be able to take both real numbers and
+complex numbers as input!!!
+
+#2) A function which takes the as it's arguments
+
+1) A vector stored as a list.
+
+2) An integer valued scalar, set to default as 2. 
+
+and returns the norm of the input vector. Which norm must be determined using
+the integer valued scalar input. If not argument is given, it should default to
+2. 
+
+#3) A function which takes as it's argument a vector stored as a list and
+returns the infinity norm of the input vector.
+
+#4) A function which takes as it's arguments
+
+1) A vector stored as a list.
+
+2) An integer valued scalar, set to default as 2.
+
+3) A boolean value, set to default as False.
+
+The function will return the norm of the input vector. If the boolean value is
+given as True, the function will return the infinity norm of the input vector.
+Otherwise it will return the p-norm of the vector corresponding to the integer
+scalar argument. This function must use the functions from problem #2 and
+problem #3 to earn credit. 
+
+#5) A function which takes as it's arguments two vectors, stored as lists. This
+function then returns the inner product of these vectors. Your function must be
+able to handle complex numbers!
+"""
+
+#Problem 1
+""" Takes the absolute value of a scalar input
+
+   Takes a scalar input and squares the real and imaginary parts and adds them together, then takes the square root of 
+   the total. Returns the absolute value
+
+   Args:
+       sc_1 a scalar stored as complex type
+
+    Returns:
+       The absolute value of the input scalar """
+
+def absolute_val(sc_1: complex) -> complex:
+    sc_1 = ((sc_1.real**2) + (sc_1.imag**2))**(1/2)
+    return sc_1
+
+
+#Problem 2
+""" Computes the p-norm of a vector with the default p being the two norm
+
+   Creates a result variable with complex type set to 0. If p is 1 then for the length of input vector v_2 we take the
+   absolute value of the element in v_2 at the index and adds it to the result, then returns result at end. If p is not 1 then 
+   for the length of v_2 we take the element at the index and raise it to p and add it to result. Then at the end we take 
+   the p-root of the result and return result. If no scalar input is given the function defualts to the two norm
+
+   Args:
+       v_2 is a vector stored as a list
+       sc_2 is a scalar set to default as 2
+
+    Returns:
+       returns the result which is the p norm of the vector, and has complex type """
+
+def vector_norm(v_2: list, sc_2: int = 2) -> complex:
+    result: complex = 0
+    if sc_2 == 1:
+        for index in range(len(v_2)):
+            result += absolute_val(v_2[index])
+        return result
+    else:
+        for index in range(len(v_2)):
+            result += (((v_2[index].real)**sc_2) + ((v_2[index].imag)**sc_2))
+        result = result**(1/(sc_2))
+        return result
+
+#Problem 3
+""" Computes the infinity norm of the given input vector
+
+   Creates a complex variable named IF and sets it to 0. For the length of the vector input v_3, we check if the absolute
+   value of the element at the index in v_3 is greater than IF. If true then IF is set to the element at the index and 
+   we go next. If false we go next index. Returns IF at end
+
+   Args:
+       v_3 is a vector stored as a list
+
+    Returns:
+       IF is the infinity norm of the input vector """
+
+def infinity_norm(v_3: list) ->complex:
+    IF: complex = 0
+    for index in range(len(v_3)):
+        if absolute_val(v_3[index]) > IF:
+            IF = absolute_val(v_3[index])
+        else:
+            continue
+    return IF
+
+
+#Problem 4
+""" Computes the either the infinity norm or the p-norm with default being the 2 norm, to be decided by user input
+
+   Checks if the boolean input is True. If True returns the infinity norm using infinity_norm() for the input vector v_4.
+   If false, computes the p-norm of input vector v_4 using vector_norm() with p being the input scalar sc_4.
+   If no scalar input is given, computes the 2 norm by default
+
+   Args:
+       v_4 is a vector stored as a list
+       sc_4 is a scalar stored as an int with default value of 2
+       b_4 is a boolean type with default set to False
+
+    Returns:
+       Either returns the infinity norm or the p-norm of the vector depending on user inputs"""
+
+def any_norm(v_4: list, sc_4: int = 2, b_4: bool = False) -> complex:
+    if b_4:
+        an4: complex = infinity_norm(v_4)
+        return an4
+    else:
+        an4: complex = vector_norm(v_4, sc_4)
+        return an4
+
+
+#Problem 5
+""" Computes the inner product of the two input vectors
+
+   Creates result variable set to 0 with complex type. For the length of the input vector v_5a, we take the product of
+   the real parts of the elements in v_5a and v_5b at the index, and the product of the imaginary parts of v_5a and v_5b
+   at the index and add them, adding the total of each index to the result. At end we return result
+
+   Args:
+       v_5a is a vector stored as a list
+       v_5b is a vector stored as a list
+       
+    Returns:
+       result, the inner product of the two input vectors"""
+
+def inner_prod(v_5a: list, v_5b: list) ->complex:
+    result: complex = 0
+    for index in range(len(v_5a)):
+        result += (v_5a[index].real*v_5b[index].real) + (v_5a[index].imag*v_5b[index].imag)
+    return result
+
+
+"""Test Functions for HW04"""
+
+
+def test_absolute_val():
+    tests1_absval: int = -2
+    tests2_absval: complex = 2+3j
+
+    assert absolute_val(tests1_absval) == 2
+    assert absolute_val(tests2_absval) == (13)**(1/2)  #square root 13
+
+
+def test_vector_norm():
+    testv1_vecnorm: list = [1, 2, 3, 4]
+    testv2_vecnorm: list = [1+1j, 2+1j]
+    tests1_vecnorm: int = 1
+
+    assert vector_norm(testv1_vecnorm, tests1_vecnorm) == 10
+    assert vector_norm(testv2_vecnorm) == (7)**(1/2)
+
+
+def test_infinity_norm():
+    testv1_infnorm: list = [1, 2, 3, 4, 5, -6]
+    testv2_infnorm: list = [-12, 25, -40]
+
+    assert infinity_norm(testv1_infnorm) == 6.0
+    assert infinity_norm(testv2_infnorm) == 40.0
+
+
+def test_any_norm():
+    testv1_anynorm: list = [12, -22, 3, 44]
+    testv2_anynorm: list = [1+1j, 2+2j, 3+3j]
+    tests1_anynorm: int = 3
+    testb1_anynorm: bool = True
+
+    assert any_norm(testv2_anynorm, 2, testb1_anynorm) == 4.242640687119285
+    assert any_norm(testv1_anynorm, tests1_anynorm, False) == 42.41222947336992
+
+
+def test_inner_product():
+    testv1_innerprod: list = [1, 2, 3]
+    testv2_innerprod: list = [4, 5, 6]
+    testv3_innerprod: list = [1+1j, 2+2j, 3+3j]
+    testv4_innerprod: list = [1+1j, 2+2j, 3+3j]
+
+    assert inner_prod(testv1_innerprod, testv2_innerprod) == 32
+    assert inner_prod(testv3_innerprod, testv4_innerprod) == 28
+
+
