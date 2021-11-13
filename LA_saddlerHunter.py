@@ -94,7 +94,7 @@ def add_vectors(vector_a: list[float],
        The product of the scalar and vector stored as a list
    """
 
-def scal_vec_mult(sc1_a: int, v1_a: list):
+def scal_vec_mult(sc1_a: complex, v1_a: list):
    result: list = [0 for element in v1_a]
    for index in range(len(result)):
     result[index] = sc1_a * v1_a[index]
@@ -117,7 +117,7 @@ def scal_vec_mult(sc1_a: int, v1_a: list):
        The product of the scalar and matrix stored as a matrix(list of list)
    """
 
-def scal_matrix_mult(sc2_a: int, m2_a: list):
+def scal_matrix_mult(sc2_a: complex, m2_a: list):
   result: list = [0 for element in m2_a]
   for index in range(len(result)):
     result[index] = scal_vec_mult(sc2_a, m2_a[index])
@@ -167,7 +167,7 @@ def matrix_matrix_add(m3_a: list, m3_b: list):
    """
 
 def matrix_vector_mult(v4_a: list, m4_a: list):
-  result: list = [0 for element in m4_a[1]]
+  result: list = [0 for element in m4_a[0]]
   for index in range(len(v4_a)):
     result = add_vectors(result, scal_vec_mult(v4_a[index], m4_a[index]))
   return result
