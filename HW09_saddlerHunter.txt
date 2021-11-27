@@ -1,0 +1,9 @@
+Floating point has a few advantages over fixed point. The biggest advantage
+for floating point is that it can represent a much wider range of values
+compared to fixed point. This is becuase the amount of numbers after the 
+decimal is not fixed like with fixed point representation. Instead, the
+the amount of numbers after the decimal can change depending on the significant
+figures of the number. This allows floating point to represent very small
+and very large numbers better than fixed point. For disadvantages, floating point
+takes more bits to store the numbers compared to fixed point. This extra storage
+causes floating point to be slower with calculations compared to fixed point.

@@ -1,0 +1,8 @@
+My previous answer to this question was to build a chemical equation balancing calculator,
+but I was more thinking within the scope of this class. Along with continuing to become 
+more proficient in python (and maybe a little R), I would like to learn a bit about SQL. 
+Since I run every day conneceted up to a gps watch with a heart monitor, I would like to 
+create a database of my times, pace, route, and heart rate in which I could look at my 
+performance over whatever time interval I want or what route I took. Maybe weather data
+time of day could be included somehow. I will probably try to work on some useful version
+of this idea to get me started on with learning more about databases.
