@@ -95,7 +95,6 @@ def ID_build(size: int) -> list:
         I.append(c)
     return I
 
-
 def sub_col(matrix: list, col: int) -> list:
     """Takes the sub col of the given matrix along the diagonol for the given col
 
@@ -109,9 +108,7 @@ def sub_col(matrix: list, col: int) -> list:
             B, the sub col along the diaganol of the input matrix
     """
     B = (matrix[(col-1)])
-    for int in range(col-1):
-        del B[int]
-    return B
+    return B[col-1:len(matrix)]
 
 
 def ele_conj(element: complex) -> complex:
@@ -127,64 +124,93 @@ def ele_conj(element: complex) -> complex:
     return element.conjugate()
 
 
-def conjugate_transpose(matrix: list) -> list:
-    """Takes the conjugate transpose of a matrix
+def colT_mult(C: list, CT: list) -> list:
+    """ Multiplies a column by its transpose for each element (originally was having issues with my inner product function
+        so I wrote this)
 
-        Creates an empty list V then for each col in the given matrix we append the element at the given row to r. Then we
-        append r to V. Returns V
+        Creates a result vector. Then for each elemnt in the input column and transpose, multiplies each element at the
+        index
 
         Args:
-            matrix, a list of col vectors
+            C, a column vector
+            CT, the columns transpose
         Returns:
-            V the conjugate transpose of the given matrix
+            result, essentially the inner product of the column with its transpose
     """
-    V: list = []
-    for col in range(len(matrix[0])):
-        r = []
-        for row in range(len(matrix)):
-            r.append(ele_conj(matrix[row][col]))
-        V.append(r)
-    return V
+    result: complex = 0
+    for i in range(len(C)):
+        for x in range(len(CT[0])):
+            result += (CT[i][x] * C[i])
+    return result
 
 
-def f_builder(V: list) -> list:
+def f_builder(cV: list) -> list:
     """Creates the F matrix for the housholder eq to use in computing Q
 
-        Computes the transpse and inner product of V the input vector, then finds 2 * Vtranspose * V and stores as Vmulti. Then finds the difference
-        between I and the negated Vmulti. Returns F
+        Computes the transpse and norm of the column, then finds F = I -2vv*/v*v using functions from LA file.
+        Outputs the matrix F for the given column
 
         Args:
-            V, a col vector
+            cV, a col vector
         Returns:
-            F, the result of the formula in the householder equation
+            F, a matrix computed with the formula F = I -2vv*/v*v
     """
-    transposeV: list = conjugate_transpose(V)
-    innerV: complex = LA_saddlerHunter.matrix_matrix_mult(transposeV, V)[0][0]
-    Vmulti: list = LA_saddlerHunter.scal_matrix_mult((2/innerV), LA_saddlerHunter.matrix_matrix_mult(V, transposeV))
-    nVmulti: list = (LA_saddlerHunter.scal_matrix_mult(-1, Vmulti))
-    F = LA_saddlerHunter.matrix_matrix_add(ID_build(len(Vmulti)), nVmulti)
+    transposecV: list = [[cV[i]] for i in range(len(cV))]
+    normcV: complex = LA_saddlerHunter.vector_norm(cV)
+    ui: list = LA_saddlerHunter.scal_vec_mult(normcV, (ID_build(len(transposecV)))[0])
+    U1: list = LA_saddlerHunter.add_vectors(ui, LA_saddlerHunter.scal_vec_mult(-1, cV))
+    tranU1: list = [[U1[i]] for i in range(len(U1))]
+    VVt: list = LA_saddlerHunter.matrix_matrix_mult([U1], tranU1)
+    VtV: list = colT_mult(U1, tranU1)
+    F: list = LA_saddlerHunter.matrix_matrix_add(ID_build(len(VVt)), LA_saddlerHunter.scal_matrix_mult((-2/VtV), VVt))
     return F
 
-"""Unfortunately i have broken my f builder due to an issue with how I wrote my norm functions in my LA script.
-    I believe all the support functions are working correctly but i have run out of time
-   
-   REMINDER to finish this weekend or be in office hours on monday
-"""
 
+def q_builder(matrix: list, lg: int):
+    """Builds the Q vector for a given F
 
-def q_builder(matrix: list, k: int):
-    """Builds the Q vector for a given F and k the col number
-
-        Creates and Id matrix +1 the size of the F matrix given. Then for each col in Q we check if the row and col is the same
-        as k. If it is we replace that index with the corresponding index in the input matrix until we have built Q. Returns Q
+        Creates an ID matrix with the given size. Builds the Q matrix by inserting the input matrix into the ID matrix
+        at the bottom right of the matrix. Returns e the assembled Q for the given matrix
 
         Args:
             matrix, the F matrix from the householder eq stored as list of col
-            k, the col where the F matrix needs to be in Q
+            lg, the number of columns in the matrix
         Returns:
-            Q, the matrix of col vectors built by F
+            e, the Q matrix of col vectors built by F matrix input
     """
+    e: list = ID_build(lg)
+    for i in range(1, lg):
+        for j in range(len(matrix)):
+            e[i][j+1] = matrix[i-1][j]
+    return e
+
 
 def householder(matrix: list):
-    """Finds the QR orth of the given matrix and returns [Q, R]
+    """Computes the QR decomposition for the given matrix using the hoseholder algorithm
+
+        Finds the first iteration of Q using F_builder and uses to calculate R. Checks R to see if it is in the Upper
+        right triangualar form we desire. If not, continues the householder algorithm for the next subcolumn until
+        the R matrix is in Upper right form (unfortunately there is some rounding errors with the floating points so
+        most of the "zeros" end up being an extremely small number so i added a crude tolerance check). When R is of the
+        correct form we return Q and R
+
+        Args:
+            matrix, a list of columns
+        Returns:
+            Q,R the built Q matrix followed by the upper triangular matrix R
      """
+    Q: list = f_builder(matrix[0])
+    R: list = LA_saddlerHunter.matrix_matrix_mult(Q, matrix)
+    for i in range(len(matrix) - 1):
+        for j in range(i +1, len(matrix[0])):
+            if -0.1 < R[i][j] < 0.01:
+                continue
+            else:
+                sc: list = sub_col(R, j)
+                if len(sc) == len(matrix):
+                    H: list = f_builder(sc)
+                else:
+                    H: list = q_builder(f_builder(sc), len(matrix))
+                Q = LA_saddlerHunter.matrix_matrix_mult(Q, H)
+                R = LA_saddlerHunter.matrix_matrix_mult(H, R)
+    return Q, R
