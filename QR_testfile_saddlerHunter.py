@@ -3,18 +3,17 @@ import pytest
 
 qrtest1 = [[1,1,0],[1,0,1],[0,1,1]]
 qrtest2 = [[2,2,1], [3,4,1]]
+def test_mat_build():
+    assert QR_saddlerHunter.mat_build(qrtest1) == [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+    assert QR_saddlerHunter.mat_build([[1, 1], [1, 1]]) == [[0, 0], [0, 0]]
 
-"""Sorry this bit was for my own testing will fix"""
-#assert QR_saddlerHunter.stable_gramschmidt(qrtest2) == [[[2/3, 2/3, 1/3], [-1/3, 2/3, -2/3], [[3, 0],[5, 1]]]]
-#assert QR_saddlerHunter.stable_gramschmidt(qrtest1) == [[[(1/(2**(1/2))), 1/(2**(1/2)), 0],[1/(6**(1/2)), -1/(6**(1/2)), 2/(6**(1/2))], [-1/(3**(1/2)), 1/(3**(1/2)), 1/(3**(1/2))]],
-                                                        #[[(2/(2**(1/2))), 0, 0], [(1/(2**(1/2))), (3/(6**(1/2))), 0], [(1/(2**(1/2))), (1/(6**(1/2))), (2/(3**(1/2)))]]]
-
-
-#assert QR_saddlerHunter.orthonormal_basis(qrtest2) == [[2/3, 2/3, 1/3], [-1/3, 2/3, -2/3]]
-#assert QR_saddlerHunter.orthonormal_basis(qrtest1) == [[(1/(2**(1/2))), 1/(2**(1/2)), 0],[1/(6**(1/2)), -1/(6**(1/2)), 2/(6**(1/2))], [-1/(3**(1/2)), 1/(3**(1/2)), 1/(3**(1/2))]]
-
-
-
+def test_sgs():
+    assert QR_saddlerHunter.stable_gramschmidt(qrtest2) == [[[2/3, 2/3, 1/3], [-1/3, 2/3, -2/3], [[3, 0],[5, 1]]]]
+    assert QR_saddlerHunter.stable_gramschmidt(qrtest1) == [[[(1/(2**(1/2))), 1/(2**(1/2)), 0],[1/(6**(1/2)), -1/(6**(1/2)), 2/(6**(1/2))], [-1/(3**(1/2)), 1/(3**(1/2)), 1/(3**(1/2))]],
+                                                        [[(2/(2**(1/2))), 0, 0], [(1/(2**(1/2))), (3/(6**(1/2))), 0], [(1/(2**(1/2))), (1/(6**(1/2))), (2/(3**(1/2)))]]]
+def test_orth_basis():
+    assert QR_saddlerHunter.orthonormal_basis(qrtest2) == [[2/3, 2/3, 1/3], [-1/3, 2/3, -2/3]]
+    assert QR_saddlerHunter.orthonormal_basis(qrtest1) == [[(1/(2**(1/2))), 1/(2**(1/2)), 0],[1/(6**(1/2)), -1/(6**(1/2)), 2/(6**(1/2))], [-1/(3**(1/2)), 1/(3**(1/2)), 1/(3**(1/2))]]
 
 """Test for functions for HW7, Im not sure what the assertion error is for the F builder test or the householder test
 but the numbers seem to come out fine"""

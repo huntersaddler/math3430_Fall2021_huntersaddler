@@ -78,7 +78,6 @@ def ID_build(size: int) -> list:
 
         Makes empty list I and c, then for each col we check if the row is equal to the col. If equal, we append 1 to c.
         else we append 0 to c. Then we append each col stored in c to I. returns I
-
         Args:
             size, the desired size of the id matrix
         Returns:
@@ -166,7 +165,7 @@ def f_builder(cV: list) -> list:
     return F
 
 
-def q_builder(matrix: list, lg: int):
+def q_builder(matrix: list, lg: int) -> list:
     """Builds the Q vector for a given F
 
         Creates an ID matrix with the given size. Builds the Q matrix by inserting the input matrix into the ID matrix
@@ -185,7 +184,7 @@ def q_builder(matrix: list, lg: int):
     return e
 
 
-def householder(matrix: list):
+def householder(matrix: list) -> list:
     """Computes the QR decomposition for the given matrix using the hoseholder algorithm
 
         Finds the first iteration of Q using F_builder and uses to calculate R. Checks R to see if it is in the Upper
@@ -213,4 +212,7 @@ def householder(matrix: list):
                     H: list = q_builder(f_builder(sc), len(matrix))
                 Q = LA_saddlerHunter.matrix_matrix_mult(Q, H)
                 R = LA_saddlerHunter.matrix_matrix_mult(H, R)
-    return Q, R
+    z: list = []
+    z.append(Q)
+    z.append(R)
+    return z
