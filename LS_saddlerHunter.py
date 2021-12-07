@@ -1,36 +1,29 @@
 import LA_saddlerHunter
 import QR_saddlerHunter
 
-"""I have confused my self with my iterations. Unfortunately my back sub is not working and it is time to submit. I will
-update my github soon as it works but wanted to get something turned in"""
-
 def back_sub(Rmatrix: list, Dvector: list) -> list:
-    xi: list = []
-    xn: float = Dvector[len(Dvector)-1] * (1/Rmatrix[len(Rmatrix)-1][len(Rmatrix)-1]) #this is the first sol
-    xi.append(xn)
+    """Finds the solution vector x for some system Ax = b for the given A matrix and b column vector by using the
+    back substitution method.
+
+    We calculate the first solution of the back sub method for the system which corresponds to the last row in the
+    matrix and the vector. After storing the first solution, we find each of the next solutions by using the back sub
+    method and the previous solutions.
+
+    Args:
+        Rmatrix: The upper triangular matrix for the system stored as a list of lists where each component list is a
+        column
+        Dvector: the b vector for the system stored as a list
+    Returns:
+        The x vector, the solution to the system Ax = b
+    """
+    xn: list = [Dvector[-1] * (1/Rmatrix[-1][-1])] #this is the first sol
     for i in range(len(Rmatrix)-2, -1, -1):
-        summ: float = 0
-        for j in range(len(Rmatrix[i])-1, 0, -1):
-            print(i,j)
-            print(Rmatrix[i][j])
-            print(xi[i-1])
-            summ = summ + (Rmatrix[i][j] * xi[i-1])
-            print(Rmatrix[i][j] * xi[i-1])
-        xi.append((Dvector[i] - summ) * (1/Rmatrix[i][i]))
-        """print(summ)
-        print(Dvector[i])
-        print(Dvector[i] - summ)"""
-        """need to print in reverse since i am appending the last value first"""
-    return xi
-
-plsm: list = [[1, 0, 0], [2, -4, 0], [1, 1, 2]]
-bm: list = [5, 2, -4]
-print(back_sub(plsm, bm))
-
-
-
-
-
+        ele: float = Dvector[i]
+        for j in range(len(xn)):
+            ele -= Rmatrix[len(Rmatrix)-1-j][i] * xn[j]
+        xn.append(ele * 1/(Rmatrix[i][i]))
+    xn = xn[::-1]
+    return xn
 
 def LeastSquares(Bvector: list, Amatrix: list) -> list:
     """Finds the least squares solution for the given A matrix and b solution vector with back substitution
@@ -48,7 +41,12 @@ def LeastSquares(Bvector: list, Amatrix: list) -> list:
     QandR: list = QR_saddlerHunter.householder(Amatrix)
     Qm: list = QandR[0]
     Rm: list = QandR[1]
-    Qtransp: list = [[Qm[i]] for i in range(len(Qm))]
+    Qtransp: list = []
+    for row in range(len(Qm[0])):
+        Qtr: list = []
+        for col in range(len(Qm)):
+            Qtr.append(Qm[col][row])
+        Qtransp.append(Qtr)
     d: list = LA_saddlerHunter.matrix_vector_mult(Bvector, Qtransp)
     x: list = back_sub(Rm, d)
     return x
